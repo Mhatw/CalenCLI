@@ -102,11 +102,16 @@ events = [
     calendar: "web-dev" }
 ]
 id.class # for pass rubocop because yet no use id
+
+########################### Methods
+
+# footer prompt event method
 def footer_prompt
   puts "------------------------------------------------------------------------------"
   puts "list | create | show | update | delete | next | prev | exit"
 end
 
+# list event method
 def list(events)
   puts "-----------------------------Welcome to CalenCLI------------------------------"
   puts ""
@@ -129,7 +134,103 @@ def list(events)
   end
   footer_prompt
 end
-list(events)
-# Methods
 
+# --------------create methods----------------------
+
+# method ask if date value are input in YYYY-MM-DD format
+def if_valid_date(value, iteration, create_action_value)
+  y, m, d = value.split "-"
+  valid_date = Date.valid_date? y.to_i, m.to_i, d.to_i
+  if valid_date == true
+    # if is ok push in array
+    p create_action_value.push(value)
+  else
+    # else ask again
+    puts "Type a valid date: YYYY-MM-DD"
+    iteration -= 1
+    iteration
+  end
+end
+
+# method create a validation for data input in create
+def create_validation(value, iteration, create_action_data, create_action_value)
+  # p value
+  case create_action_data[iteration]
+  # When loop is in date data prompt
+  when "date"
+    # start valid date verification method
+    if_valid_date(value, iteration, create_action_value)
+
+  # When loop is in date title prompt
+  when "title"
+    # if title value is blank ask again
+    if value == ""
+      puts "Cannot be blank"
+      iteration -= 1
+      iteration
+    # if is ok push in array
+    else
+      p create_action_value.push(value)
+    end
+
+  # When loop is in date start_end prompt
+  when "start_end"
+    puts "requiere"
+    p create_action_value.push(value)
+
+  # Time.parse()
+
+  # when loop is in optional create action
+  else
+    p create_action_value.push(value)
+  end
+end
 # Main Program
+
+list(events)
+
+action = nil
+while action != "exit"
+  print "action: "
+  action = gets.chomp.strip
+  case action
+  when "list"
+    puts "inicio accion list"
+
+  when "create"
+    puts "inicio accion create"
+    create_action_data = %w[date title calendar start_end notes guests]
+    create_action_value = []
+    # requiere data - values
+    i = 0
+    while i < 6
+      print "#{create_action_data[i]}: "
+      value = gets.chomp
+      create_validation(value, i, create_action_data, create_action_value)
+      i += 1
+    end
+
+    # crear metodo para pushear al hash
+  when "show"
+    puts "inicio accion show"
+
+  when "update"
+    puts "inicio accion update"
+
+  when "delete"
+    puts "inicio accion delete"
+
+  when "next"
+    puts "inicio accion next"
+
+  when "prev"
+    puts "inicio accion prev"
+
+  when "exit"
+    puts "inicio accion exit"
+
+  else
+    puts "invalid action"
+  end
+  footer_prompt  # call method
+end
