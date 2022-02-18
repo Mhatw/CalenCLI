@@ -188,3 +188,49 @@ end
 # Main Program
 
 list(events)
+
+action = nil
+while action != "exit"
+  print "action: "
+  action = gets.chomp.strip
+  case action
+  when "list"
+    puts "inicio accion list"
+
+  when "create"
+    puts "inicio accion create"
+    create_action_data = %w[date title calendar start_end notes guests]
+    create_action_value = []
+    # requiere data - values
+    i = 0
+    while i < 6
+      print "#{create_action_data[i]}: "
+      value = gets.chomp
+      create_validation(value, i, create_action_data, create_action_value)
+      i += 1
+    end
+
+    # crear metodo para pushear al hash
+  when "show"
+    puts "inicio accion show"
+
+  when "update"
+    puts "inicio accion update"
+
+  when "delete"
+    puts "inicio accion delete"
+
+  when "next"
+    puts "inicio accion next"
+
+  when "prev"
+    puts "inicio accion prev"
+
+  when "exit"
+    puts "inicio accion exit"
+
+  else
+    puts "invalid action"
+  end
+  footer_prompt  # call method
+end
