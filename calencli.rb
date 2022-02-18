@@ -1,7 +1,7 @@
 require "date"
 require "time"
 id = 0
-$events = [
+events = [
   { id: (id = id.next),
     start_date: "2021-11-15T00:00:00-05:00",
     title: "Ruby Basics 1",
@@ -101,15 +101,16 @@ $events = [
     guests: [],
     calendar: "web-dev" }
 ]
+id.class # for pass rubocop because yet no use id
 def footer_prompt
   puts "------------------------------------------------------------------------------"
   puts "list | create | show | update | delete | next | prev | exit"
 end
 
-def list
+def list(events)
   puts "-----------------------------Welcome to CalenCLI------------------------------"
   puts ""
-  $events.each do |element|
+  events.each do |element|
     fecha = Date.parse(element[:start_date]).strftime("%a %b %d")
     hora_inicio = Time.parse(element[:start_date].to_s).strftime("%H:%M")
     if hora_inicio == "00:00" && element[:start_date].to_s == ""
@@ -128,7 +129,7 @@ def list
   end
   footer_prompt
 end
-list
+list(events)
 
 # Methods
 
