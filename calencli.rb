@@ -148,7 +148,6 @@ def if_valid_date(value, iteration, create_action_value)
     # else ask again
     puts "Type a valid date: YYYY-MM-DD"
     iteration -= 1
-    iteration
   end
 end
 
