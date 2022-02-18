@@ -1,6 +1,11 @@
-# Data
+require 'date'
+require 'time'
 id = 0
-events = [
+def footer_prompt()
+  puts "------------------------------------------------------------------------------"
+  puts "list | create | show | update | delete | next | prev | exit"
+end
+$events = [
   { "id" => (id = id.next),
     "start_date" => "2021-11-15T00:00:00-05:00",
     "title" => "Ruby Basics 1",
@@ -102,5 +107,27 @@ events = [
 ]
 
 # Methods
-
+puts "-----------------------------Welcome to CalenCLI------------------------------"
+puts ""
+$events.each do |element|
+  fecha = "#{Date.parse(element["start_date"]).strftime("%a %b %d")}"
+  hora_inicio = "#{Time.parse(element["start_date"].to_s).strftime("%H:%M")}"
+  id = element["id"]
+  if hora_inicio == "00:00" && element["end_date"].to_s == ""
+    hora_inicio = " "*11
+    hora_fin = " "
+  elsif element["end_date"].to_s == ""
+      hora_fin = " "*7
+  elsif hora_inicio == "00:00"
+    hora_inicio = " "*11
+  else 
+    hora_fin = "- #{Time.parse(element["end_date"].to_s).strftime("%H:%M")}"
+  end
+  titulo = element["title"]
+  
+  puts "#{fecha}  #{hora_inicio} #{hora_fin} #{titulo} (#{id}) "
+  puts ""
+  
+end
+footer_prompt()
 # Main Program
