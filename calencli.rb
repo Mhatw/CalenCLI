@@ -138,35 +138,55 @@ end
 # --------------create methods----------------------
 
 # method ask if date value are input in YYYY-MM-DD format
-def if_valid_date(value, iteration, create_action_value)
+def if_valid_date(value, create_action_value, iii)
   y, m, d = value.split "-"
   valid_date = Date.valid_date? y.to_i, m.to_i, d.to_i
   if valid_date == true
     # if is ok push in array
-    p create_action_value.push(value)
+    create_action_value.push(value)
   else
     # else ask again
     puts "Type a valid date: YYYY-MM-DD"
-    iteration -= 1
+    # p defined? iteration -= 1
+    iii.push(-1)
   end
 end
+# id: (id = id.next),
+#     start_date: "2021-11-18T09:00:00-05:00",
+#     title: "Extended Project",
+#     end_date: "",
+#     notes: "",
+#     guests: [],
+# %FT%T%:z
+#     calendar: "web-dev" }, date title calendar start_end notes guests
+# def add_event(create_action_value)
+#   y, m, d = create_action_value[0].split "-"
+#   inicial, final = create_action_value[3].split " "
+#   hi, mi = inicial.split ":"
+#   hi, hf = final.split ":"
+#   start_date = DateTime.new(y,m,d,hi,mi,00,"-05:00").strftime("%FT%T%:z")
+#   end_date = DateTime.new(y,m,d,hf,mf,00,"-05:00").strftime("%FT%T%:z")
+#   new_event = { id: id, start_date: start_date, title: title, end_date: end_date, notes: notes, guests: guests}
+#   # new_event = { date: date, title: title, calendar: calendar, start_end: start_end, notes: notes, guests: guests}
+#   p new_event
+# end
 
 # method create a validation for data input in create
-def create_validation(value, iteration, create_action_data, create_action_value)
+def create_validation(value, iteration, create_action_data, create_action_value, iii)
   # p value
   case create_action_data[iteration]
   # When loop is in date data prompt
   when "date"
     # start valid date verification method
-    if_valid_date(value, iteration, create_action_value)
+    if_valid_date(value, create_action_value, iii)
 
   # When loop is in date title prompt
   when "title"
     # if title value is blank ask again
     if value == ""
       puts "Cannot be blank"
-      iteration -= 1
-      iteration
+      iii.push(-1)
+    # iteration
     # if is ok push in array
     else
       p create_action_value.push(value)
@@ -184,7 +204,7 @@ def create_validation(value, iteration, create_action_data, create_action_value)
     p create_action_value.push(value)
   end
 end
-# Main Program
+# Main Program###########################################################################################
 
 list(events)
 
@@ -200,13 +220,16 @@ while action != "exit"
     puts "inicio accion create"
     create_action_data = %w[date title calendar start_end notes guests]
     create_action_value = []
+    iii = []
     # requiere data - values
     i = 0
     while i < 6
       print "#{create_action_data[i]}: "
       value = gets.chomp
-      create_validation(value, i, create_action_data, create_action_value)
-      i += 1
+      create_validation(value, i, create_action_data, create_action_value, iii)
+      i = i + 1 + iii[0].to_i
+      iii = []
+
     end
 
     # crear metodo para pushear al hash
