@@ -130,7 +130,6 @@ def list(events)
   footer_prompt
 end
 list(events)
-
 # Methods
 
 # Main Program
