@@ -123,7 +123,7 @@ def list(events)
     else
       hora_fin = "- #{Time.parse(element[:start_date].to_s).strftime('%H:%M')}"
     end
-    titulo = element["title"]
+    titulo = element[:title]
     puts "#{fecha}  #{hora_inicio} #{hora_fin} #{titulo} (#{element[:id]}) "
     puts ""
   end
