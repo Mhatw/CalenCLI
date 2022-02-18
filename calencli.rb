@@ -102,11 +102,16 @@ events = [
     calendar: "web-dev" }
 ]
 id.class # for pass rubocop because yet no use id
+
+########################### Methods
+
+# footer prompt event method
 def footer_prompt
   puts "------------------------------------------------------------------------------"
   puts "list | create | show | update | delete | next | prev | exit"
 end
 
+# list event method
 def list(events)
   puts "-----------------------------Welcome to CalenCLI------------------------------"
   puts ""
@@ -129,7 +134,24 @@ def list(events)
   end
   footer_prompt
 end
-list(events)
-# Methods
+
+# --------------create methods----------------------
+
+# ask if date value are input in YYYY-MM-DD format
+def if_valid_date(value, iteration, create_action_value)
+  y, m, d = value.split "-"
+  valid_date = Date.valid_date? y.to_i, m.to_i, d.to_i
+  if valid_date == true
+    # if is ok push in array
+    p create_action_value.push(value)
+  else
+    # else ask again
+    puts "Type a valid date: YYYY-MM-DD"
+    iteration -= 1
+    iteration
+  end
+end
 
 # Main Program
+
+list(events)
