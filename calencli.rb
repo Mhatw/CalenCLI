@@ -137,7 +137,7 @@ end
 
 # --------------create methods----------------------
 
-# ask if date value are input in YYYY-MM-DD format
+# method ask if date value are input in YYYY-MM-DD format
 def if_valid_date(value, iteration, create_action_value)
   y, m, d = value.split "-"
   valid_date = Date.valid_date? y.to_i, m.to_i, d.to_i
@@ -152,6 +152,39 @@ def if_valid_date(value, iteration, create_action_value)
   end
 end
 
+# method create a validation for data input in create
+def create_validation(value, iteration, create_action_data, create_action_value)
+  # p value
+  case create_action_data[iteration]
+  # When loop is in date data prompt
+  when "date"
+    # start valid date verification method
+    if_valid_date(value, iteration, create_action_value)
+
+  # When loop is in date title prompt
+  when "title"
+    # if title value is blank ask again
+    if value == ""
+      puts "Cannot be blank"
+      iteration -= 1
+      iteration
+    # if is ok push in array
+    else
+      p create_action_value.push(value)
+    end
+
+  # When loop is in date start_end prompt
+  when "start_end"
+    puts "requiere"
+    p create_action_value.push(value)
+
+  # Time.parse()
+
+  # when loop is in optional create action
+  else
+    p create_action_value.push(value)
+  end
+end
 # Main Program
 
 list(events)
