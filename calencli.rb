@@ -154,9 +154,7 @@ end
 
 def add_event(events, the, id)
   y, m, d = the[0].split "-"
-  p y, m, d
   inicial, final = the[3].split
-  p inicial, final
   hi, mi = inicial.split ":"
   hf, mf = final.split ":"
   start_date = DateTime.new(y.to_i, m.to_i, d.to_i, hi.to_i, mi.to_i, "00".to_i, "-05:00").strftime("%FT%T%:z")
