@@ -280,15 +280,29 @@ def if_valid_hour(value, create_action_value, iii)
   end
 end
 
+def empty_hour()
+
+end
+
 # method push event to events hash
 def add_event(events, the, id)
   y, m, d = the[0].split "-"
+  empty_v = the[3].empty?
+  if empty_v == true
+    the[3] = "00:00 00:00"
+  end
   inicial, final = the[3].split
   hi, mi = inicial.split ":"
   hf, mf = final.split ":"
   start_date = DateTime.new(y.to_i, m.to_i, d.to_i, hi.to_i, mi.to_i, "00".to_i, "-05:00").strftime("%FT%T%:z")
   end_date = DateTime.new(y.to_i, m.to_i, d.to_i, hf.to_i, mf.to_i, "00".to_i, "-05:00").strftime("%FT%T%:z")
-  new_event = { id: id, start_date: start_date, title: the[1], end_date: end_date, notes: the[4], guests: the[5] }
+  
+  if empty_v == true
+    new_event = { id: id, start_date: "", title: the[1], end_date: "", notes: the[4], guests: the[5] }
+  else
+    new_event = { id: id, start_date: start_date, title: the[1], end_date: end_date, notes: the[4], guests: the[5] }
+    
+  end
   events.push(new_event)
 end
 
@@ -327,6 +341,7 @@ end
 
 def delete_event(events, event_id)
   events.delete_if { |event| event[:id] == event_id }
+  list(events)
 end
 
 # --------------delete methods end----------------------
