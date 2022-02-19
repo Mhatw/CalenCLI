@@ -151,25 +151,20 @@ def if_valid_date(value, create_action_value, iii)
     iii.push(-1)
   end
 end
-# id: (id = id.next),
-#     start_date: "2021-11-18T09:00:00-05:00",
-#     title: "Extended Project",
-#     end_date: "",
-#     notes: "",
-#     guests: [],
-# %FT%T%:z
-#     calendar: "web-dev" }, date title calendar start_end notes guests
-# def add_event(create_action_value)
-#   y, m, d = create_action_value[0].split "-"
-#   inicial, final = create_action_value[3].split " "
-#   hi, mi = inicial.split ":"
-#   hi, hf = final.split ":"
-#   start_date = DateTime.new(y,m,d,hi,mi,00,"-05:00").strftime("%FT%T%:z")
-#   end_date = DateTime.new(y,m,d,hf,mf,00,"-05:00").strftime("%FT%T%:z")
-#   new_event = { id: id, start_date: start_date, title: title, end_date: end_date, notes: notes, guests: guests}
-#   # new_event = { date: date, title: title, calendar: calendar, start_end: start_end, notes: notes, guests: guests}
-#   p new_event
-# end
+
+def add_event(events, the, id)
+  y, m, d = the[0].split "-"
+  p y, m, d
+  inicial, final = the[3].split
+  p inicial, final
+  hi, mi = inicial.split ":"
+  hf, mf = final.split ":"
+  start_date = DateTime.new(y.to_i, m.to_i, d.to_i, hi.to_i, mi.to_i, "00".to_i, "-05:00").strftime("%FT%T%:z")
+  end_date = DateTime.new(y.to_i, m.to_i, d.to_i, hf.to_i, mf.to_i, "00".to_i, "-05:00").strftime("%FT%T%:z")
+  new_event = { id: id, start_date: start_date, title: the[1], end_date: end_date, notes: the[4], guests: the[5] }
+  events.push(new_event)
+  p new_event
+end
 
 # method create a validation for data input in create
 def create_validation(value, iteration, create_action_data, create_action_value, iii)
@@ -231,7 +226,10 @@ while action != "exit"
       iii = []
 
     end
-
+    p create_action_value
+    id = id.next
+    add_event(events, create_action_value, id)
+    p events
     # crear metodo para pushear al hash
   when "show"
     puts "inicio accion show"
