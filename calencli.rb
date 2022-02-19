@@ -207,6 +207,15 @@ def create_validation(value, iteration, create_action_data, create_action_value,
   end
 end
 
+# --------------create methods end----------------------
+
+# --------------delete methods----------------------
+
+def delete_event(events, event_id)
+  events.delete_if { |event| event[:id] == event_id }
+end
+
+# --------------delete methods end----------------------
 # Main Program###########################################################################################
 
 list(events)
@@ -243,6 +252,10 @@ while action != "exit"
 
   when "delete"
     puts "inicio accion delete"
+    print "Event ID: "
+    value_d = gets.chomp.to_i
+    delete_event(events, value_d)
+    # imprimir lista
 
   when "next"
     puts "inicio accion next"
