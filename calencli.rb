@@ -1,5 +1,6 @@
 require "date"
 require "time"
+require "active_support"
 id = 0
 events = [
   { id: (id = id.next),
@@ -99,11 +100,34 @@ events = [
     end_date: "",
     notes: "",
     guests: [],
+    calendar: "web-dev" },
+  { id: (id = id.next),
+    start_date: "2022-02-14T09:00:00-05:00",
+    title: "Extended Project",
+    end_date: "",
+    notes: "",
+    guests: [],
+    calendar: "web-dev" },
+  { id: (id = id.next),
+    start_date: "2022-02-14T09:30:00-05:00",
+    title: "Extended Project rare",
+    end_date: "",
+    notes: "",
+    guests: [],
+    calendar: "web-dev" },
+  { id: (id = id.next),
+    start_date: "2022-02-19T09:00:00-05:00",
+    title: "Extended Project rare second part",
+    end_date: "2022-02-19T13:30:00-05:00",
+    notes: "",
+    guests: [],
     calendar: "web-dev" }
 ]
 id.class # for pass rubocop because yet no use id
 
 ########################### Methods
+@printed_day = false
+@printed_day_nbsp = false
 
 # footer prompt event method
 def footer_prompt
@@ -112,29 +136,119 @@ def footer_prompt
 end
 
 # list event method
+
 def list(events)
   puts "-----------------------------Welcome to CalenCLI------------------------------"
   puts ""
-  events.each do |element|
-    fecha = Date.parse(element[:start_date]).strftime("%a %b %d")
-    hora_inicio = Time.parse(element[:start_date].to_s).strftime("%H:%M")
-    if hora_inicio == "00:00" && element[:start_date].to_s == ""
-      hora_inicio = " " * 11
-      hora_fin = " "
-    elsif element[:start_date].to_s == ""
-      hora_fin = " " * 7
-    elsif hora_inicio == "00:00"
-      hora_inicio = " " * 11
-    else
-      hora_fin = "- #{Time.parse(element[:start_date].to_s).strftime('%H:%M')}"
-    end
-    titulo = element[:title]
-    puts "#{fecha}  #{hora_inicio} #{hora_fin} #{titulo} (#{element[:id]}) "
-    puts ""
-  end
-  footer_prompt
+  monday = Date.today - (Date.today.wday - 1)
+  content_list(monday, events)
+  puts ""
 end
 
+# content of the list element
+def content_list(monday, events)
+  previous_calendar(Date.parse(monday.to_s), events)
+  previous_calendar(Date.parse((monday + 1).to_s), events)
+  previous_calendar(Date.parse((monday + 2).to_s), events)
+  previous_calendar(Date.parse((monday + 3).to_s), events)
+  previous_calendar(Date.parse((monday + 4).to_s), events)
+  previous_calendar(Date.parse((monday + 5).to_s), events)
+  previous_calendar(Date.parse((monday + 6).to_s), events)
+end
+
+# calculate if hash contain the day gave
+def previous_calendar(day, events)
+  number_date_m = Date.today.wday - 1
+  monday = Date.today - number_date_m
+  mon_parsed = Date.parse(monday.to_s)
+  tues_parsed = Date.parse((monday + 1).to_s)
+  wed_parsed = Date.parse((monday + 2).to_s)
+  thur_parsed = Date.parse((monday + 3).to_s)
+  fri_parsed = Date.parse((monday + 4).to_s)
+  sat_parsed = Date.parse((monday + 5).to_s)
+  sun_parsed = Date.parse((monday + 6).to_s)
+  switch_calendar(day, events, mon_parsed, tues_parsed, wed_parsed, thur_parsed, fri_parsed, sat_parsed, sun_parsed)
+end
+
+# check all days of the week monday - saturday
+def switch_calendar(day, events, *days)
+  case day
+  when days[0]
+    iterate_hash(days[0], events)
+  when days[1]
+    iterate_hash(days[1], events)
+  when days[2]
+    iterate_hash(days[2], events)
+  when days[3]
+    iterate_hash(days[3], events)
+  when days[4]
+    iterate_hash(days[4], events)
+  when days[5]
+    iterate_hash(days[5], events)
+  when days[6]
+    iterate_hash(days[6], events)
+  end
+end
+
+# iterate whole hash searching events with a day gave
+def iterate_hash(day, events)
+  counter = 0
+  events.each do |element|
+    start_date_h = element[:start_date].to_s
+    date = Date.parse(start_date_h).strftime("%a %b %d")
+    hora_inicio = Time.parse(start_date_h).strftime("%H:%M")
+    if hora_inicio == "00:00" && start_date_h == ""
+      hora_inicio = " " * 11
+      # hora_fin = " "
+    elsif element[:end_date].to_s == ""
+      hora_fin = " " * 7
+    # elsif hora_inicio == "00:00"
+    #  hora_inicio = " " * 11
+    else
+      hora_fin = "- #{Time.parse(element[:end_date].to_s).strftime('%H:%M')}"
+    end
+    day_parse = Date.parse(day.to_s).strftime("%a %b %d")
+    start_date_p = Date.parse(element[:start_date]).strftime("%a %b %d")
+    long = events.length
+    text = "#{element[:title]} (#{element[:id]})"
+    # print_elements(day_parse, start_date_p, date, hora_inicio, hora_fin, element[:title], element[:id], counter, long)
+    print_elements(day_parse, start_date_p, date, hora_inicio, hora_fin, text, counter, long)
+    counter += 1
+  end
+end
+
+# return hours day_parse 0, start_date_parse 1, date 2, start_hour 3, end_hour 4, title 5, id 6, counter 7, long 8
+def print_elements(*parameters)
+  day_start = (parameters[0] == parameters[1])
+  all_elements_hash = (parameters[6] + 1 == parameters[7])
+  if day_start && !@printed_day
+    @printed_day = true
+    puts "#{parameters[2]}  #{parameters[3]} #{parameters[4]} #{parameters[5]}"
+  elsif day_start && @printed_day
+    puts "            #{parameters[3]} #{parameters[4]} #{parameters[5]}"
+    @printed_day_nbsp = true
+  else
+    final_hash(all_elements_hash, parameters[0])
+  end
+end
+
+def final_hash(all_elements_hash, day)
+  if all_elements_hash && @printed_day && @printed_day_nbsp == false
+    puts ""
+    puts "#{day}                No events"
+    @printed_day = false
+    @printed_day_nbsp = false
+  elsif all_elements_hash && @printed_day
+    @printed_day = false
+    @printed_day_nbsp = false
+    puts ""
+  elsif all_elements_hash
+    @printed_day = false
+    @printed_day_nbsp = false
+    puts "#{day}                No events"
+    puts ""
+  end
+end
 # --------------create methods----------------------
 
 # method ask if date value are input in YYYY-MM-DD format
@@ -219,15 +333,14 @@ end
 # Main Program###########################################################################################
 
 list(events)
-
+footer_prompt
 action = nil
 while action != "exit"
   print "action: "
   action = gets.chomp.strip
   case action
   when "list"
-    puts "inicio accion list"
-
+    list(events)
   when "create"
     create_action_data = %w[date title calendar start_end notes guests]
     create_action_value = []
