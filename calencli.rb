@@ -152,6 +152,21 @@ def if_valid_date(value, create_action_value, iii)
   end
 end
 
+# method ask if hour value are input in HH:MM < HH:MM format
+def if_valid_hour(value, create_action_value, iii)
+  inicial, final = value.split
+  valid_i = inicial =~ /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/
+  valid_f = final =~ /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/
+  if (!valid_i.nil? && !valid_f.nil? && inicial < final) || value.empty?
+    create_action_value.push(value)
+  else
+    puts "Format: 'HH:MM HH:MM' or leave it empty"
+    puts "Remember second hour must be greater than first hour"
+    iii.push(-1)
+  end
+end
+
+# method push event to events hash
 def add_event(events, the, id)
   y, m, d = the[0].split "-"
   inicial, final = the[3].split
@@ -161,7 +176,6 @@ def add_event(events, the, id)
   end_date = DateTime.new(y.to_i, m.to_i, d.to_i, hf.to_i, mf.to_i, "00".to_i, "-05:00").strftime("%FT%T%:z")
   new_event = { id: id, start_date: start_date, title: the[1], end_date: end_date, notes: the[4], guests: the[5] }
   events.push(new_event)
-  p new_event
 end
 
 # method create a validation for data input in create
@@ -182,21 +196,17 @@ def create_validation(value, iteration, create_action_data, create_action_value,
     # iteration
     # if is ok push in array
     else
-      p create_action_value.push(value)
+      create_action_value.push(value)
     end
 
   # When loop is in date start_end prompt
   when "start_end"
-    puts "requiere"
-    p create_action_value.push(value)
-
-  # Time.parse()
-
-  # when loop is in optional create action
+    if_valid_hour(value, create_action_value, iii) ##########
   else
-    p create_action_value.push(value)
+    create_action_value.push(value)
   end
 end
+
 # Main Program###########################################################################################
 
 list(events)
@@ -210,7 +220,6 @@ while action != "exit"
     puts "inicio accion list"
 
   when "create"
-    puts "inicio accion create"
     create_action_data = %w[date title calendar start_end notes guests]
     create_action_value = []
     iii = []
@@ -224,11 +233,8 @@ while action != "exit"
       iii = []
 
     end
-    p create_action_value
     id = id.next
     add_event(events, create_action_value, id)
-    p events
-    # crear metodo para pushear al hash
   when "show"
     puts "inicio accion show"
 
