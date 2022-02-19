@@ -138,54 +138,85 @@ end
 # --------------create methods----------------------
 
 # method ask if date value are input in YYYY-MM-DD format
-def if_valid_date(value, iteration, create_action_value)
+def if_valid_date(value, create_action_value, iii)
   y, m, d = value.split "-"
   valid_date = Date.valid_date? y.to_i, m.to_i, d.to_i
   if valid_date == true
     # if is ok push in array
-    p create_action_value.push(value)
+    create_action_value.push(value)
   else
     # else ask again
     puts "Type a valid date: YYYY-MM-DD"
-    iteration -= 1
-    iteration
+    # p defined? iteration -= 1
+    iii.push(-1)
   end
 end
 
+# method ask if hour value are input in HH:MM < HH:MM format
+def if_valid_hour(value, create_action_value, iii)
+  inicial, final = value.split
+  valid_i = inicial =~ /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/
+  valid_f = final =~ /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/
+  if (!valid_i.nil? && !valid_f.nil? && inicial < final) || value.empty?
+    create_action_value.push(value)
+  else
+    puts "Format: 'HH:MM HH:MM' or leave it empty"
+    puts "Remember second hour must be greater than first hour"
+    iii.push(-1)
+  end
+end
+
+# method push event to events hash
+def add_event(events, the, id)
+  y, m, d = the[0].split "-"
+  inicial, final = the[3].split
+  hi, mi = inicial.split ":"
+  hf, mf = final.split ":"
+  start_date = DateTime.new(y.to_i, m.to_i, d.to_i, hi.to_i, mi.to_i, "00".to_i, "-05:00").strftime("%FT%T%:z")
+  end_date = DateTime.new(y.to_i, m.to_i, d.to_i, hf.to_i, mf.to_i, "00".to_i, "-05:00").strftime("%FT%T%:z")
+  new_event = { id: id, start_date: start_date, title: the[1], end_date: end_date, notes: the[4], guests: the[5] }
+  events.push(new_event)
+end
+
 # method create a validation for data input in create
-def create_validation(value, iteration, create_action_data, create_action_value)
+def create_validation(value, iteration, create_action_data, create_action_value, iii)
   # p value
   case create_action_data[iteration]
   # When loop is in date data prompt
   when "date"
     # start valid date verification method
-    if_valid_date(value, iteration, create_action_value)
+    if_valid_date(value, create_action_value, iii)
 
   # When loop is in date title prompt
   when "title"
     # if title value is blank ask again
     if value == ""
       puts "Cannot be blank"
-      iteration -= 1
-      iteration
+      iii.push(-1)
+    # iteration
     # if is ok push in array
     else
-      p create_action_value.push(value)
+      create_action_value.push(value)
     end
 
   # When loop is in date start_end prompt
   when "start_end"
-    puts "requiere"
-    p create_action_value.push(value)
-
-  # Time.parse()
-
-  # when loop is in optional create action
+    if_valid_hour(value, create_action_value, iii) ##########
   else
-    p create_action_value.push(value)
+    create_action_value.push(value)
   end
 end
-# Main Program
+
+# --------------create methods end----------------------
+
+# --------------delete methods----------------------
+
+def delete_event(events, event_id)
+  events.delete_if { |event| event[:id] == event_id }
+end
+
+# --------------delete methods end----------------------
+# Main Program###########################################################################################
 
 list(events)
 
@@ -198,19 +229,21 @@ while action != "exit"
     puts "inicio accion list"
 
   when "create"
-    puts "inicio accion create"
     create_action_data = %w[date title calendar start_end notes guests]
     create_action_value = []
+    iii = []
     # requiere data - values
     i = 0
     while i < 6
       print "#{create_action_data[i]}: "
       value = gets.chomp
-      create_validation(value, i, create_action_data, create_action_value)
-      i += 1
-    end
+      create_validation(value, i, create_action_data, create_action_value, iii)
+      i = i + 1 + iii[0].to_i
+      iii = []
 
-    # crear metodo para pushear al hash
+    end
+    id = id.next
+    add_event(events, create_action_value, id)
   when "show"
     puts "inicio accion show"
 
@@ -219,6 +252,10 @@ while action != "exit"
 
   when "delete"
     puts "inicio accion delete"
+    print "Event ID: "
+    value_d = gets.chomp.to_i
+    delete_event(events, value_d)
+    # imprimir lista
 
   when "next"
     puts "inicio accion next"
