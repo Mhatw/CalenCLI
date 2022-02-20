@@ -1,6 +1,35 @@
 require "date"
 require "time"
 require "active_support"
+require "colorize"
+require "colorized_string"
+
+class String
+  def black;          "\e[30m#{self}\e[0m" end
+  def red;            "\e[31m#{self}\e[0m" end
+  def green;          "\e[32m#{self}\e[0m" end
+  def brown;          "\e[33m#{self}\e[0m" end
+  def blue;           "\e[34m#{self}\e[0m" end
+  def magenta;        "\e[35m#{self}\e[0m" end
+  def cyan;           "\e[36m#{self}\e[0m" end
+  def gray;           "\e[37m#{self}\e[0m" end
+  
+  def bg_black;       "\e[40m#{self}\e[0m" end
+  def bg_red;         "\e[41m#{self}\e[0m" end
+  def bg_green;       "\e[42m#{self}\e[0m" end
+  def bg_brown;       "\e[43m#{self}\e[0m" end
+  def bg_blue;        "\e[44m#{self}\e[0m" end
+  def bg_magenta;     "\e[45m#{self}\e[0m" end
+  def bg_cyan;        "\e[46m#{self}\e[0m" end
+  def bg_gray;        "\e[47m#{self}\e[0m" end
+  
+  def bold;           "\e[1m#{self}\e[22m" end
+  def italic;         "\e[3m#{self}\e[23m" end
+  def underline;      "\e[4m#{self}\e[24m" end
+  def blink;          "\e[5m#{self}\e[25m" end
+  def reverse_color;  "\e[7m#{self}\e[27m" end
+  end
+  
 id = 0
 events = [
   { id: (id = id.next),
@@ -104,7 +133,7 @@ events = [
   { id: (id = id.next),
     start_date: "2022-02-14T09:00:00-05:00",
     title: "Extended Project",
-    end_date: "",
+    end_date: "2022-02-14T12:00:00-05:00",
     notes: "",
     guests: [],
     calendar: "web-dev" },
@@ -131,15 +160,26 @@ id.class # for pass rubocop because yet no use id
 
 # footer prompt event method
 def footer_prompt
-  puts "------------------------------------------------------------------------------"
-  puts "list | create | show | update | delete | next | prev | exit"
-  puts "           "
+  puts "-----------------------------------------------------------------"
+  k = 0
+  arr_k = %w[list create show update delete next prev]
+  while k < 7
+    print " #{arr_k[k]} ".black.bg_cyan
+    print "|"
+    k += 1
+  end
+  print " exit ".bg_red.bold
+  puts "\n"
 end
 
 # --------------list methods----------------------
 
 def list(events)
-  puts "-----------------------------Welcome to CalenCLI------------------------------"
+  puts "   "
+  puts "                    Welcome to CalenCLI                        ".bg_gray.black.italic + "   "
+  puts "   "
+  print "---" + "Date".cyan + "----------" + "Hour".cyan + "-------------" + "Event (Id)".cyan
+  print "----------------------"
   puts ""
   monday = Date.today - (Date.today.wday - 1)
   content_list(monday, events)
@@ -211,7 +251,7 @@ def iterate_hash(day, events)
     day_parse = Date.parse(day.to_s).strftime("%a %b %d")
     start_date_p = Date.parse(element[:start_date]).strftime("%a %b %d")
     long = events.length
-    text = "#{element[:title]} (#{element[:id]})"
+    text = "#{element[:title]} (#{element[:id]})".green
     # print_elements(day_parse, start_date_p, date, hora_inicio, hora_fin, element[:title], element[:id], counter, long)
     print_elements(day_parse, start_date_p, date, hora_inicio, hora_fin, text, counter, long)
     counter += 1
@@ -264,7 +304,7 @@ def if_valid_date(value, create_action_value, iii)
     create_action_value.push(value)
   else
     # else ask again
-    puts "Type a valid date: YYYY-MM-DD"
+    puts "Type a valid date: YYYY-MM-DD ".red.bg_gray
     # p defined? iteration -= 1
     iii.push(-1)
   end
@@ -278,8 +318,8 @@ def if_valid_hour(value, create_action_value, iii)
   if (!valid_i.nil? && !valid_f.nil? && inicial < final) || value.empty?
     create_action_value.push(value)
   else
-    puts "Format: 'HH:MM HH:MM' or leave it empty"
-    puts "Remember second hour must be greater than first hour"
+    puts "Format: 'HH:MM HH:MM' or leave it empty".red.bg_gray
+    puts "Remember second hour must be greater than first hour".black.bg_brown
     iii.push(-1)
   end
 end
@@ -316,7 +356,7 @@ def create_validation(value, iteration, create_action_data, create_action_value,
   when "title"
     # if title value is blank ask again
     if value == ""
-      puts "Cannot be blank"
+      puts "Cannot be blank".red.bg_gray
       iii.push(-1)
     # iteration
     # if is ok push in array
@@ -349,7 +389,7 @@ def show_event(events, value)
       hora_inicio = "  "
       hora_final = "  "
     end
-    puts "date: #{date}"
+    puts "date: #{date}".bg_brown
     puts "title: #{event[:title]}"
     puts "calendar: #{event[:calendar]}"
     puts "start_end: #{hora_inicio} #{hora_final}"
@@ -365,7 +405,7 @@ end
 def update_event(events, update_value)
   event = events.find { |p| p[:id] == update_value }
   if event.nil?
-    puts "sorry, the event you are looking for does not exist"
+    puts "sorry, the event you are looking for does not exist".red.bg_gray
   else
     create_action_data = %w[date title calendar start_end notes guests]
     create_action_value = []
@@ -401,7 +441,10 @@ def change_event(events, the, id, replace_id, event)
                     { id: id, start_date: start_date, title: the[1], end_date: end_date, notes: the[4], guests: d }
                   end
   event.replace(replace_event)
-  puts "\n\n\nChanges applied successfully!!!\n\n\n"
+  puts "    "
+  puts "Changes applied successfully!!!".green
+  puts "++++++++++++++++++++++++++".green+"-----".red
+  puts "    "
   show_event(events, replace_id)
 end
 # --------------update methods end----------------------
@@ -433,7 +476,7 @@ while action != "exit"
     # requiere data - values
     i = 0
     while i < 6
-      print "#{create_action_data[i]}: "
+      print "#{create_action_data[i]}: ".green
       value = gets.chomp
       create_validation(value, i, create_action_data, create_action_value, iii)
       i = i + 1 + iii[0].to_i
@@ -454,9 +497,10 @@ while action != "exit"
     update_event(events, update_value)
 
   when "delete"
-    print "Event ID: "
+    print "Event ID: ".red
     value_d = gets.chomp.to_i
     delete_event(events, value_d)
+    puts "-----------------".red + "   |event #{value_d} was deleted".gray
 
   when "next"
     puts "inicio accion next"
@@ -465,10 +509,11 @@ while action != "exit"
     puts "inicio accion prev"
 
   when "exit"
-    puts "inicio accion exit"
+    puts "Thanks for using calenCLI".cyan
+    puts "from : DDC"
 
   else
-    puts "invalid action"
+    puts "invalid action".red.bg_gray
   end
   footer_prompt  # call method
 end
