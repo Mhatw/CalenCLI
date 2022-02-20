@@ -526,7 +526,7 @@ def delete_event(events, event_id)
 end
 
 # --------------delete methods end--------------------
-# --------------next method -------------------------
+# --------------next method --------------------
 def next_week(events)
   puts "   "
   puts "                    Welcome to CalenCLI                        ".bg_gray.black.italic + "   "
