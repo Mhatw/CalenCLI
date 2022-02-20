@@ -193,7 +193,7 @@ events = [
   { id: (id = id.next),
     start_date: "2022-02-14T09:00:00-05:00",
     title: "Extended Project",
-    end_date: "2022-02-14T12:00:00-05:00",
+    end_date: "",
     notes: "",
     guests: [],
     calendar: "web-dev" },
@@ -232,8 +232,8 @@ def footer_prompt
   puts "\n"
 end
 
+# list event method
 # --------------list methods----------------------
-
 def list(events)
   puts "   "
   puts "#{'                     Welcome to CalenCLI                         '.bg_gray.black.italic}   "
@@ -285,10 +285,18 @@ def switch_calendar(day, events, *days)
     iterate_hash(days[3], events)
   when days[4]
     iterate_hash(days[4], events)
-  when days[5]
-    iterate_hash(days[5], events)
-  when days[6]
-    iterate_hash(days[6], events)
+  else
+    switch_calendar2(day, events, days[5], days[6])
+  end
+end
+
+# second part of switch calendar
+def switch_calendar2(day, events, *days)
+  case day
+  when days[0]
+    iterate_hash(days[0], events)
+  when days[1]
+    iterate_hash(days[1], events)
   end
 end
 
@@ -353,7 +361,6 @@ def final_hash(all_elements_hash, day)
 end
 
 # --------------list methods end---------------------
-
 # --------------create methods----------------------
 
 # method ask if date value are input in YYYY-MM-DD format
