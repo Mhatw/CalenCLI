@@ -183,10 +183,18 @@ def switch_calendar(day, events, *days)
     iterate_hash(days[3], events)
   when days[4]
     iterate_hash(days[4], events)
-  when days[5]
-    iterate_hash(days[5], events)
-  when days[6]
-    iterate_hash(days[6], events)
+  else
+    switch_calendar2(day, events, days[5], days[6])
+  end
+end
+
+# second part of switch calendar
+def switch_calendar2(day, events, *days)
+  case day
+  when days[0]
+    iterate_hash(days[0], events)
+  when days[1]
+    iterate_hash(days[1], events)
   end
 end
 
