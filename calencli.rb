@@ -136,7 +136,7 @@ def footer_prompt
   puts "           "
 end
 
-# list event method
+# --------------list methods----------------------
 
 def list(events)
   puts "-----------------------------Welcome to CalenCLI------------------------------"
@@ -250,6 +250,9 @@ def final_hash(all_elements_hash, day)
     puts ""
   end
 end
+
+# --------------list methods end---------------------
+
 # --------------create methods----------------------
 
 # method ask if date value are input in YYYY-MM-DD format
@@ -410,7 +413,8 @@ def delete_event(events, event_id)
   list(events)
 end
 
-# --------------delete methods end----------------------
+# --------------delete methods end--------------------
+
 # Main Program###########################################################################################
 
 list(events)
@@ -450,7 +454,6 @@ while action != "exit"
     update_event(events, update_value)
 
   when "delete"
-    puts "inicio accion delete"
     print "Event ID: "
     value_d = gets.chomp.to_i
     delete_event(events, value_d)
