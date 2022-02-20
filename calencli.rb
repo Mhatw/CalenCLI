@@ -193,7 +193,7 @@ events = [
   { id: (id = id.next),
     start_date: "2022-02-14T09:00:00-05:00",
     title: "Extended Project",
-    end_date: "",
+    end_date: "2022-02-14T12:00:00-05:00",
     notes: "",
     guests: [],
     calendar: "web-dev" },
@@ -249,19 +249,19 @@ end
 
 # content of the list element
 def content_list(monday, events)
-  previous_calendar(Date.parse(monday.to_s), events)
-  previous_calendar(Date.parse((monday + 1).to_s), events)
-  previous_calendar(Date.parse((monday + 2).to_s), events)
-  previous_calendar(Date.parse((monday + 3).to_s), events)
-  previous_calendar(Date.parse((monday + 4).to_s), events)
-  previous_calendar(Date.parse((monday + 5).to_s), events)
-  previous_calendar(Date.parse((monday + 6).to_s), events)
+  previous_calendar(monday, Date.parse(monday.to_s), events)
+  previous_calendar(monday, Date.parse((monday + 1).to_s), events)
+  previous_calendar(monday, Date.parse((monday + 2).to_s), events)
+  previous_calendar(monday, Date.parse((monday + 3).to_s), events)
+  previous_calendar(monday, Date.parse((monday + 4).to_s), events)
+  previous_calendar(monday, Date.parse((monday + 5).to_s), events)
+  previous_calendar(monday, Date.parse((monday + 6).to_s), events)
 end
 
 # calculate if hash contain the day gave
-def previous_calendar(day, events)
-  number_date_m = Date.today.wday - 1
-  monday = Date.today - number_date_m
+def previous_calendar(monday, day, events)
+  # number_date_m = Date.today.wday - 1
+  # monday = Date.today - number_date_m
   mon_parsed = Date.parse(monday.to_s)
   tues_parsed = Date.parse((monday + 1).to_s)
   wed_parsed = Date.parse((monday + 2).to_s)
@@ -320,8 +320,7 @@ def iterate_hash(day, events)
     day_parse = Date.parse(day.to_s).strftime("%a %b %d")
     start_date_p = Date.parse(element[:start_date]).strftime("%a %b %d")
     long = events.length
-    text = "#{element[:title]} (#{element[:id]})".green
-    # print_elements(day_parse, start_date_p, date, hora_inicio, hora_fin, element[:title], element[:id], counter, long)
+    text = "#{element[:title]} (#{element[:id]})"
     print_elements(day_parse, start_date_p, date, hora_inicio, hora_fin, text, counter, long)
     counter += 1
   end
@@ -474,7 +473,7 @@ end
 def update_event(events, update_value)
   event = events.find { |p| p[:id] == update_value }
   if event.nil?
-    puts "sorry, the event you are looking for does not exist"
+    puts "sorry, the event you are looking for does not exist".red.bg_gray
   else
     create_action_data = %w[date title calendar start_end notes guests]
     create_action_value = []
@@ -527,7 +526,30 @@ def delete_event(events, event_id)
 end
 
 # --------------delete methods end--------------------
-
+# --------------next method -------------------------
+def next_week(events)
+  puts "   "
+  puts "                    Welcome to CalenCLI                        ".bg_gray.black.italic + "   "
+  puts "   "
+  print "---" + "Date".cyan + "----------" + "Hour".cyan + "-------------" + "Event (Id)".cyan
+  print "----------------------"
+  puts ""
+  monday = Date.today - (Date.today.wday - 1)
+  content_list(monday + 7, events)
+  puts ""
+end
+# --------------prev method -------------------------
+def prev_week(events)
+  puts "   "
+  puts "                    Welcome to CalenCLI                        ".bg_gray.black.italic + "   "
+  puts "   "
+  print "---" + "Date".cyan + "----------" + "Hour".cyan + "-------------" + "Event (Id)".cyan
+  print "----------------------"
+  puts ""
+  monday = Date.today - (Date.today.wday - 1)
+  content_list(monday -7, events)
+  puts ""
+end
 # Main Program###########################################################################################
 
 list(events)
@@ -573,10 +595,11 @@ while action != "exit"
     puts "-----------------".red + "   |event #{value_d} was deleted".gray
 
   when "next"
-    puts "inicio accion next"
+    # puts "inicio accion next"
+    next_week(events)
 
   when "prev"
-    puts "inicio accion prev"
+    prev_week(events)
 
   when "exit"
     puts "Thanks for using calenCLI".cyan
