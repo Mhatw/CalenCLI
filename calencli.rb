@@ -529,25 +529,28 @@ end
 # --------------next method --------------------
 def next_week(events)
   puts "   "
-  puts "                    Welcome to CalenCLI                        ".bg_gray.black.italic + "   "
+  puts "#{'                     Welcome to CalenCLI                         '.bg_gray.black.italic}   "
+  print "   "
   puts "   "
-  print "---" + "Date".cyan + "----------" + "Hour".cyan + "-------------" + "Event (Id)".cyan
+  print "---#{'Date'.cyan}----------#{'Hour'.cyan}-------------#{'Event (Id)'.cyan}"
   print "----------------------"
   puts ""
   monday = Date.today - (Date.today.wday - 1)
   content_list(monday + 7, events)
   puts ""
 end
+
 # --------------prev method -------------------------
 def prev_week(events)
   puts "   "
-  puts "                    Welcome to CalenCLI                        ".bg_gray.black.italic + "   "
+  puts "#{'                     Welcome to CalenCLI                         '.bg_gray.black.italic}   "
+  print "   "
   puts "   "
-  print "---" + "Date".cyan + "----------" + "Hour".cyan + "-------------" + "Event (Id)".cyan
+  print "---#{'Date'.cyan}----------#{'Hour'.cyan}-------------#{'Event (Id)'.cyan}"
   print "----------------------"
   puts ""
   monday = Date.today - (Date.today.wday - 1)
-  content_list(monday -7, events)
+  content_list(monday - 7, events)
   puts ""
 end
 # Main Program###########################################################################################
