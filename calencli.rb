@@ -291,11 +291,11 @@ def add_event(events, the, id)
   hf, mf = final.split ":"
   start_date = DateTime.new(y.to_i, m.to_i, d.to_i, hi.to_i, mi.to_i, "00".to_i, "-05:00").strftime("%FT%T%:z")
   end_date = DateTime.new(y.to_i, m.to_i, d.to_i, hf.to_i, mf.to_i, "00".to_i, "-05:00").strftime("%FT%T%:z")
-
+  d = the[5].split(", ")
   new_event = if empty_v == true
-                { id: id, start_date: "", title: the[1], end_date: "", notes: the[4], guests: the[5] }
+                { id: id, start_date: "", title: the[1], end_date: "", notes: the[4], guests: d }
               else
-                { id: id, start_date: start_date, title: the[1], end_date: end_date, notes: the[4], guests: the[5] }
+                { id: id, start_date: start_date, title: the[1], end_date: end_date, notes: the[4], guests: d }
               end
   events.push(new_event)
 end
@@ -357,6 +357,52 @@ end
 
 # --------------show methods end----------------------
 
+# --------------update methods----------------------
+
+def update_event(events, update_value)
+  event = events.find { |p| p[:id] == update_value }
+  if event.nil?
+    puts "sorry, the event you are looking for does not exist"
+  else
+    create_action_data = %w[date title calendar start_end notes guests]
+    create_action_value = []
+    iii = []
+    # requiere data - values
+    i = 0
+    while i < 6
+      print "#{create_action_data[i]}: "
+      value = gets.chomp
+      create_validation(value, i, create_action_data, create_action_value, iii)
+      i = i + 1 + iii[0].to_i
+      iii = []
+
+    end
+    id = update_value
+    change_event(events, create_action_value, id, update_value, event)
+  end
+end
+
+def change_event(events, the, id, replace_id, event)
+  y, m, d = the[0].split "-"
+  empty_v = the[3].empty?
+  the[3] = "00:00 00:00" if empty_v == true
+  inicial, final = the[3].split
+  hi, mi = inicial.split ":"
+  hf, mf = final.split ":"
+  start_date = DateTime.new(y.to_i, m.to_i, d.to_i, hi.to_i, mi.to_i, "00".to_i, "-05:00").strftime("%FT%T%:z")
+  end_date = DateTime.new(y.to_i, m.to_i, d.to_i, hf.to_i, mf.to_i, "00".to_i, "-05:00").strftime("%FT%T%:z")
+  d = the[5].split(", ")
+  replace_event = if empty_v == true
+                    { id: id, start_date: "", title: the[1], end_date: "", notes: the[4], guests: d }
+                  else
+                    { id: id, start_date: start_date, title: the[1], end_date: end_date, notes: the[4], guests: d }
+                  end
+  event.replace(replace_event)
+  puts "\n\n\nChanges applied successfully!!!\n\n\n"
+  show_event(events, replace_id)
+end
+# --------------update methods end----------------------
+
 # --------------delete methods----------------------
 
 def delete_event(events, event_id)
@@ -399,14 +445,15 @@ while action != "exit"
     show_event(events, show_value)
 
   when "update"
-    puts "inicio accion update"
+    print "Event ID: "
+    update_value = gets.chomp.to_i
+    update_event(events, update_value)
 
   when "delete"
     puts "inicio accion delete"
     print "Event ID: "
     value_d = gets.chomp.to_i
     delete_event(events, value_d)
-    # imprimir lista
 
   when "next"
     puts "inicio accion next"
