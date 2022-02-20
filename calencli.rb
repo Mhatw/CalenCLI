@@ -133,6 +133,7 @@ id.class # for pass rubocop because yet no use id
 def footer_prompt
   puts "------------------------------------------------------------------------------"
   puts "list | create | show | update | delete | next | prev | exit"
+  puts "           "
 end
 
 # list event method
@@ -280,29 +281,22 @@ def if_valid_hour(value, create_action_value, iii)
   end
 end
 
-def empty_hour()
-
-end
-
 # method push event to events hash
 def add_event(events, the, id)
   y, m, d = the[0].split "-"
   empty_v = the[3].empty?
-  if empty_v == true
-    the[3] = "00:00 00:00"
-  end
+  the[3] = "00:00 00:00" if empty_v == true
   inicial, final = the[3].split
   hi, mi = inicial.split ":"
   hf, mf = final.split ":"
   start_date = DateTime.new(y.to_i, m.to_i, d.to_i, hi.to_i, mi.to_i, "00".to_i, "-05:00").strftime("%FT%T%:z")
   end_date = DateTime.new(y.to_i, m.to_i, d.to_i, hf.to_i, mf.to_i, "00".to_i, "-05:00").strftime("%FT%T%:z")
-  
-  if empty_v == true
-    new_event = { id: id, start_date: "", title: the[1], end_date: "", notes: the[4], guests: the[5] }
-  else
-    new_event = { id: id, start_date: start_date, title: the[1], end_date: end_date, notes: the[4], guests: the[5] }
-    
-  end
+
+  new_event = if empty_v == true
+                { id: id, start_date: "", title: the[1], end_date: "", notes: the[4], guests: the[5] }
+              else
+                { id: id, start_date: start_date, title: the[1], end_date: end_date, notes: the[4], guests: the[5] }
+              end
   events.push(new_event)
 end
 
@@ -336,6 +330,32 @@ def create_validation(value, iteration, create_action_data, create_action_value,
 end
 
 # --------------create methods end----------------------
+
+# --------------show methods----------------------
+
+def show_event(events, value)
+  event = events.find { |p| p[:id] == value }
+  if event.nil?
+    puts "sorry, the event you are looking for does not exist"
+  else
+    date = Date.parse(event[:start_date]).strftime("%Y-%m-%d")
+    if !event[:start_date].empty? && !event[:end_date].empty?
+      hora_inicio = Time.parse(event[:start_date]).strftime("%H:%M")
+      hora_final = Time.parse(event[:end_date]).strftime("%H:%M")
+    else
+      hora_inicio = "  "
+      hora_final = "  "
+    end
+    puts "date: #{date}"
+    puts "title: #{event[:title]}"
+    puts "calendar: #{event[:calendar]}"
+    puts "start_end: #{hora_inicio} #{hora_final}"
+    puts "notes: #{event[:notes]}"
+    puts "guests: #{event[:guests].join(', ')}"
+  end
+end
+
+# --------------show methods end----------------------
 
 # --------------delete methods----------------------
 
@@ -373,7 +393,10 @@ while action != "exit"
     id = id.next
     add_event(events, create_action_value, id)
   when "show"
-    puts "inicio accion show"
+    print "Event ID: "
+    show_value = gets.chomp.to_i
+
+    show_event(events, show_value)
 
   when "update"
     puts "inicio accion update"
