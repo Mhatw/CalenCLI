@@ -5,31 +5,91 @@ require "colorize"
 require "colorized_string"
 
 class String
-  def black;          "\e[30m#{self}\e[0m" end
-  def red;            "\e[31m#{self}\e[0m" end
-  def green;          "\e[32m#{self}\e[0m" end
-  def brown;          "\e[33m#{self}\e[0m" end
-  def blue;           "\e[34m#{self}\e[0m" end
-  def magenta;        "\e[35m#{self}\e[0m" end
-  def cyan;           "\e[36m#{self}\e[0m" end
-  def gray;           "\e[37m#{self}\e[0m" end
-  
-  def bg_black;       "\e[40m#{self}\e[0m" end
-  def bg_red;         "\e[41m#{self}\e[0m" end
-  def bg_green;       "\e[42m#{self}\e[0m" end
-  def bg_brown;       "\e[43m#{self}\e[0m" end
-  def bg_blue;        "\e[44m#{self}\e[0m" end
-  def bg_magenta;     "\e[45m#{self}\e[0m" end
-  def bg_cyan;        "\e[46m#{self}\e[0m" end
-  def bg_gray;        "\e[47m#{self}\e[0m" end
-  
-  def bold;           "\e[1m#{self}\e[22m" end
-  def italic;         "\e[3m#{self}\e[23m" end
-  def underline;      "\e[4m#{self}\e[24m" end
-  def blink;          "\e[5m#{self}\e[25m" end
-  def reverse_color;  "\e[7m#{self}\e[27m" end
+  def black
+    "\e[30m#{self}\e[0m"
   end
-  
+
+  def red
+    "\e[31m#{self}\e[0m"
+  end
+
+  def green
+    "\e[32m#{self}\e[0m"
+  end
+
+  def brown
+    "\e[33m#{self}\e[0m"
+  end
+
+  def blue
+    "\e[34m#{self}\e[0m"
+  end
+
+  def magenta
+    "\e[35m#{self}\e[0m"
+  end
+
+  def cyan
+    "\e[36m#{self}\e[0m"
+  end
+
+  def gray
+    "\e[37m#{self}\e[0m"
+  end
+
+  def bg_black
+    "\e[40m#{self}\e[0m"
+  end
+
+  def bg_red
+    "\e[41m#{self}\e[0m"
+  end
+
+  def bg_green
+    "\e[42m#{self}\e[0m"
+  end
+
+  def bg_brown
+    "\e[43m#{self}\e[0m"
+  end
+
+  def bg_blue
+    "\e[44m#{self}\e[0m"
+  end
+
+  def bg_magenta
+    "\e[45m#{self}\e[0m"
+  end
+
+  def bg_cyan
+    "\e[46m#{self}\e[0m"
+  end
+
+  def bg_gray
+    "\e[47m#{self}\e[0m"
+  end
+
+  def bold
+    "\e[1m#{self}\e[22m"
+  end
+
+  def italic
+    "\e[3m#{self}\e[23m"
+  end
+
+  def underline
+    "\e[4m#{self}\e[24m"
+  end
+
+  def blink
+    "\e[5m#{self}\e[25m"
+  end
+
+  def reverse_color
+    "\e[7m#{self}\e[27m"
+  end
+end
+
 id = 0
 events = [
   { id: (id = id.next),
@@ -176,9 +236,10 @@ end
 
 def list(events)
   puts "   "
-  puts "                    Welcome to CalenCLI                        ".bg_gray.black.italic + "   "
+  puts "#{'                     Welcome to CalenCLI                         '.bg_gray.black.italic}   "
+  print "   "
   puts "   "
-  print "---" + "Date".cyan + "----------" + "Hour".cyan + "-------------" + "Event (Id)".cyan
+  print "---#{'Date'.cyan}----------#{'Hour'.cyan}-------------#{'Event (Id)'.cyan}"
   print "----------------------"
   puts ""
   monday = Date.today - (Date.today.wday - 1)
@@ -333,10 +394,11 @@ def add_event(events, the, id)
   hi, mi = inicial.split ":"
   hf, mf = final.split ":"
   start_date = DateTime.new(y.to_i, m.to_i, d.to_i, hi.to_i, mi.to_i, "00".to_i, "-05:00").strftime("%FT%T%:z")
+  start_date2 = DateTime.new(y.to_i, m.to_i, d.to_i, "00".to_i, "00".to_i, "00".to_i, "-05:00").strftime("%FT%T%:z")
   end_date = DateTime.new(y.to_i, m.to_i, d.to_i, hf.to_i, mf.to_i, "00".to_i, "-05:00").strftime("%FT%T%:z")
   d = the[5].split(", ")
   new_event = if empty_v == true
-                { id: id, start_date: "", title: the[1], end_date: "", notes: the[4], guests: d }
+                { id: id, start_date: start_date2, title: the[1], end_date: "", notes: the[4], guests: d }
               else
                 { id: id, start_date: start_date, title: the[1], end_date: end_date, notes: the[4], guests: d }
               end
@@ -389,7 +451,7 @@ def show_event(events, value)
       hora_inicio = "  "
       hora_final = "  "
     end
-    puts "date: #{date}".bg_brown
+    puts "date: #{date}"
     puts "title: #{event[:title]}"
     puts "calendar: #{event[:calendar]}"
     puts "start_end: #{hora_inicio} #{hora_final}"
@@ -405,7 +467,7 @@ end
 def update_event(events, update_value)
   event = events.find { |p| p[:id] == update_value }
   if event.nil?
-    puts "sorry, the event you are looking for does not exist".red.bg_gray
+    puts "sorry, the event you are looking for does not exist"
   else
     create_action_data = %w[date title calendar start_end notes guests]
     create_action_value = []
@@ -433,17 +495,18 @@ def change_event(events, the, id, replace_id, event)
   hi, mi = inicial.split ":"
   hf, mf = final.split ":"
   start_date = DateTime.new(y.to_i, m.to_i, d.to_i, hi.to_i, mi.to_i, "00".to_i, "-05:00").strftime("%FT%T%:z")
+  start_date2 = DateTime.new(y.to_i, m.to_i, d.to_i, "00".to_i, "00".to_i, "00".to_i, "-05:00").strftime("%FT%T%:z")
   end_date = DateTime.new(y.to_i, m.to_i, d.to_i, hf.to_i, mf.to_i, "00".to_i, "-05:00").strftime("%FT%T%:z")
   d = the[5].split(", ")
   replace_event = if empty_v == true
-                    { id: id, start_date: "", title: the[1], end_date: "", notes: the[4], guests: d }
+                    { id: id, start_date: start_date2, title: the[1], end_date: "", notes: the[4], guests: d }
                   else
                     { id: id, start_date: start_date, title: the[1], end_date: end_date, notes: the[4], guests: d }
                   end
   event.replace(replace_event)
   puts "    "
   puts "Changes applied successfully!!!".green
-  puts "++++++++++++++++++++++++++".green+"-----".red
+  puts "++++++++++++++++++++++++++".green + "-----".red
   puts "    "
   show_event(events, replace_id)
 end
